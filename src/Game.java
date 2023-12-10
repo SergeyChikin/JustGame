@@ -16,12 +16,8 @@ import java.util.Random;
 public class Game extends JPanel implements ActionListener,
         KeyListener {
 
-    private int playerX = 175; //Начальное положение игрока по горизонтали
-    private int playerY = 480; //Рачальное положение игрока по вертикали
-    private int playerSpeed = 15; //Скорость движения игрока
-    private ArrayList<Integer>  enemyX = new ArrayList<>(); // X - координаты врагов
-    private ArrayList<Integer> enemyY = new ArrayList<>(); // Y - координаты врагов
-    private int enemySpeed = 20; // Скорость движения врагов
+    Player player = new Player(175, 480, 15);
+    Enemy enemy = new Enemy();
     private Timer timer; // Таймер обновления экрана
     private boolean gameOver = false; // Флаг окончания игры
     private int score = 0; //Счёт игрока
@@ -48,15 +44,15 @@ public class Game extends JPanel implements ActionListener,
         graphics.setColor(Color.BLACK); // Заливаем фон чёрным цветом
         graphics.fillRect(0, 0, 400, 600);
         graphics.setColor(Color.WHITE); // Белый цвет для фигуры игрока
-        graphics.fillRect(playerX, playerY, 30, 30); // Рисуем объект игрока
+        graphics.fillRect(player.getX(), player.getY(),30,30); // Рисуем объект игрока
 
         // Врагов отрисуем в верхней части окна и отобразим с помощью красных кругов.
         // Вражеских объектов на игровом поле может быть несколько одновременно,
         // поэтому выводить их будем с помощью цикла for:
 
-        for (int i = 0; i < enemyX.size(); i++) {
+        for (int i = 0; i < enemy.getX().size(); i++) {
             graphics.setColor(Color.RED); // Красный цвет для врагов
-            graphics.fillOval(enemyX.get(i), enemyY.get(i), 20, 20);
+            graphics.fillOval(enemy.getX().get(i), enemy.getY().get(i), 20, 20);
         }
 
         graphics.setColor(Color.WHITE);
@@ -65,7 +61,7 @@ public class Game extends JPanel implements ActionListener,
 
         if (gameOver) {
             graphics.setFont(new Font("Arial", Font.PLAIN, 40));
-            graphics.drawString("GAME OVER", 120, 300); // Выводим надпись "GAME OVER" при окончании игры
+            graphics.drawString("GAME OVER", 75, 300); // Выводим надпись "GAME OVER" при окончании игры
             timer.stop(); // Останавливаем таймер
         }
 
@@ -74,17 +70,17 @@ public class Game extends JPanel implements ActionListener,
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!gameOver) {
-            for (int i = 0; i < enemyX.size(); i++) {
-                enemyY.set(i, enemyY.get(i) + enemySpeed); // Двигаем врагов вниз по экрану
-                if (enemyY.get(i) >= 600) {
-                    enemyX.remove(i);
-                    enemyY.remove(i);
+            for (int i = 0; i < enemy.getX().size(); i++) {
+                enemy.getY().set(i, enemy.getY().get(i) + enemy.getSpeed()); // Двигаем врагов вниз по экрану
+                if (enemy.getY().get(i) >= 600) {
+                    enemy.getX().remove(i);
+                    enemy.getY().remove(i);
                     score++; // Увеличиваем счет при уничтожении врага
                 }
             }
             repaint(); // Обновляем экран
 
-            if (enemyX.isEmpty()) {
+            if (enemy.getX().isEmpty()) {
                 spawnEnemy(); //  // Создаем нового врага, если текущих нет на экране
             }
             checkCollision();
@@ -98,16 +94,16 @@ public class Game extends JPanel implements ActionListener,
         for (int i = 0; i < numEnemies; i++) {
             int x = random.nextInt(350); // Генерируем случайную Х-координату для врага
             int y = 0;
-            enemyX.add(x);
-            enemyY.add(y); // Добавляем врага в списки координат
+            enemy.getX().add(x);
+            enemy.getY().add(y); // Добавляем врага в списки координат
         }
     }
 
     public void checkCollision() {
-        Rectangle playerBounds = new Rectangle(playerX, playerY, 30, 30); // Границы игрока
-        for (int i = 0; i < enemyX.size(); i++) {
-            Rectangle enemyBounds = new Rectangle(enemyX.get(i),
-                    enemyY.get(i), 20, 20); // Границы врага
+        Rectangle playerBounds = new Rectangle(player.getX(), player.getY(), 30, 30); // Границы игрока
+        for (int i = 0; i < enemy.getX().size(); i++) {
+            Rectangle enemyBounds = new Rectangle(enemy.getX().get(i),
+                    enemy.getY().get(i), 20, 20); // Границы врага
             if (playerBounds.intersects(enemyBounds)) {
                 gameOver = true; // Если произошло столкновение, игра заканчивается
                 break;
@@ -124,11 +120,11 @@ public class Game extends JPanel implements ActionListener,
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         if (!gameOver) {
-            if (key == KeyEvent.VK_LEFT && playerX > 0) {
-                playerX -= playerSpeed;  // Перемещаем игрока влево
+            if (key == KeyEvent.VK_LEFT && player.getX() > 0) {
+                player.setX(player.getX() - player.getSpeed());  // Перемещаем игрока влево
             }
-            if (key == KeyEvent.VK_RIGHT && playerX < 350) {
-                playerX += playerSpeed;  // Перемещаем игрока вправо
+            if (key == KeyEvent.VK_RIGHT && player.getX() < 350) {
+                player.setX(player.getX() + player.getSpeed());  // Перемещаем игрока вправо
             }
         }
     }
