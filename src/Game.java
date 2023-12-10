@@ -126,6 +126,12 @@ public class Game extends JPanel implements ActionListener,
             if (key == KeyEvent.VK_RIGHT && player.getX() < 350) {
                 player.setX(player.getX() + player.getSpeed());  // Перемещаем игрока вправо
             }
+            if (key == KeyEvent.VK_SPACE) {
+                timer.stop(); // Игра на паузе
+            }
+            if (key == KeyEvent.VK_ENTER) {
+                timer.start(); // Продолжение игры
+            }
         }
     }
 
