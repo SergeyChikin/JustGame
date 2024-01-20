@@ -1,7 +1,11 @@
+import javax.swing.*;
+import java.awt.*;
+
 public class Player {
     private int x; //Начальное положение игрока по горизонтали
     private int y; //Начальное положение игрока по вертикали
     private int speed; //Скорость движения игрока
+    private Image image; //Рисунок игрока
 
     public Player(int x, int y, int speed) {
         this.x = x;
