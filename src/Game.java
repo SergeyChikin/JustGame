@@ -2,6 +2,7 @@ import effect.Sound;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -17,27 +18,28 @@ import java.util.Random;
 public class Game extends JPanel implements ActionListener,
         KeyListener {
 
-    Player player = new Player(175, 500, 15);
-    Enemy enemy = new Enemy();
-    private Timer timer; // Таймер обновления экрана
-//    private Timer timerSound;
+    private ImageIcon iirocket = new ImageIcon("src/repository/image/rocket_technology_science_spaceship_business_icon_175942.png");
+    private Image rocket = iirocket.getImage();
+
+    private ImageIcon iia = new ImageIcon("src/repository/image/asteroid2_96045.png");
+    private Image asteroid = iia.getImage();
+    private Player player = new Player(175, 500, 15);
+    private Enemy enemy = new Enemy();
+    private Timer updateScreen; // Таймер обновления экрана
     private boolean gameOver = false; // Флаг окончания игры
     private int score = 0; // Счёт игрока
     private int levelCount = 1; // Уровень сложности
+
 
     public Game() {
         addKeyListener(this);
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
-//        timerSound = new Timer(3000, this); //todo возможно нужно использовать потоки, для паузы(мониторы)
-//        timerSound.start();
+        Sound.playSound("src/repository/sound/begin.wav");
+        updateScreen = new Timer(100, this); // Создаём таймер
+        updateScreen.start();
 //        Sound begin = Sound.playSound("src/repository/sound/begin.wav");
 //        begin.join();  //todo Проигрывается до начала игры
-//        Sound.playSound("C:\\Users\\79185\\Desktop\\WAV\\begin.wav");
-        Sound.playSound("src/repository/sound/begin.wav");
-//        timerSound.stop();
-        timer = new Timer(100, this); // Создаём таймер
-        timer.start();
     }
 
     public static void main(String[] args) {
@@ -53,16 +55,18 @@ public class Game extends JPanel implements ActionListener,
         super.paintComponent(graphics);
         graphics.setColor(Color.BLACK); // Заливаем фон чёрным цветом
         graphics.fillRect(0, 0, 400, 600);
-        graphics.setColor(Color.WHITE); // Белый цвет для фигуры игрока
-        graphics.fillRect(player.getX(), player.getY(), 25, 25); // Рисуем объект игрока
+//        graphics.setColor(Color.WHITE); // Белый цвет для фигуры игрока
+//        graphics.fillRect(player.getX(), player.getY(), 25, 25); // Рисуем объект игрока
+        graphics.drawImage(rocket , player.getX(), player.getY(), this); // Рисуем объект игрока
 
         // Врагов отрисуем в верхней части окна и отобразим с помощью красных кругов.
         // Вражеских объектов на игровом поле может быть несколько одновременно,
         // поэтому выводить их будем с помощью цикла for:
 
         for (int i = 0; i < enemy.getX().size(); i++) {
-            graphics.setColor(Color.RED); // Красный цвет для врагов
-            graphics.fillOval(enemy.getX().get(i), enemy.getY().get(i), 20, 20);
+//            graphics.setColor(Color.RED); // Красный цвет для врагов
+//            graphics.fillOval(enemy.getX().get(i), enemy.getY().get(i), 20, 20);
+            graphics.drawImage(asteroid, enemy.getX().get(i), enemy.getY().get(i), this);
         }
 
         graphics.setColor(Color.WHITE);
@@ -75,14 +79,13 @@ public class Game extends JPanel implements ActionListener,
             graphics.setFont(new Font("Arial", Font.PLAIN, 25));
             graphics.drawString("You scored " + score + " points.", 80, 330);
             Sound.playSound("src/repository/sound/game-over.wav");
-            timer.stop(); // Останавливаем таймер
+            updateScreen.stop(); // Останавливаем таймер
         }
-
 
         graphics.setFont(new Font("Arial", Font.PLAIN, 15));
         graphics.drawString("Level " + levelCount, 10, 20);
         if (score >= 25 && score < 50) {  //todo Сделать метод!!!
-            if (score == 25) {
+            if (score == 25) { //todo играет непрерывно, если счёт ==
                 Sound.playSound("src/repository/sound/level-up.wav");
             }
             enemy.setSpeed(25);
@@ -119,10 +122,8 @@ public class Game extends JPanel implements ActionListener,
         if (score >= 150) {
             graphics.setFont(new Font("Arial", Font.PLAIN, 40));
             graphics.drawString("YOU WIN!", 95, 300);
-//            Sound.playSound("C:\\Users\\79185\\Desktop\\WAV\\" +
-//                    "dominirovanie-igrovogo-personaja-po-vneshnemu-vidu-bgm-42277.wav");
             Sound.playSound("src/repository/sound/you-win.wav");
-            timer.stop();
+            updateScreen.stop();
         }
 
     }
@@ -190,11 +191,11 @@ public class Game extends JPanel implements ActionListener,
                 Sound.playSound("src/repository/sound/button.wav");
             }
             if (key == KeyEvent.VK_SPACE) {
-                timer.stop(); // Игра на паузе
+                updateScreen.stop(); // Игра на паузе
                 Sound.playSound("src/repository/sound/pause.wav");
             }
             if (key == KeyEvent.VK_ENTER) { //todo Переделать паузу на одну кнопку
-                timer.start(); // Продолжение игры
+                updateScreen.start(); // Продолжение игры
                 Sound.playSound("src/repository/sound/resume-game.wav");
             }
 

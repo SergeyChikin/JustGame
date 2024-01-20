@@ -47,7 +47,7 @@ public class Sound implements AutoCloseable {
     // Запуск
 	/*
 	  breakOld определяет поведение, если звук уже играется
-	  Если breakOld==true, о звук будет прерван и запущен заново
+	  Если breakOld==true, то звук будет прерван и запущен заново
 	  Иначе ничего не произойдёт
 	*/
     public void play(boolean breakOld) {
